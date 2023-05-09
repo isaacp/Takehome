@@ -37,7 +37,13 @@ The system in question will express the following requirements:
 
 Our design will make use of a **Per-unit** billing model. The per-unit model will give us a metric for each property and is relatively simple to convert to a **tiered**, **volume-based**, and or **overage** model in the future, if necessary.
 
-Starting from what the customer will see, the billing statement should look something like the following:
+For the purposes of this project, we will assume that the billable units are defined as below.
+
+- Compute Unit (CU) = 1MB/Sec -> ???
+- Storage Unit (SU) = 1MB/Sec -> $0.016
+- Bandwidth Unit (BU) = 1MB/sec -> $0.008
+
+Starting from what the customer will see, our billing statement should look something like the following:
 
 ![usage_statement](usage_statement.png)
 
@@ -114,3 +120,12 @@ Starting from what the customer will see, the billing statement should look some
     }
 }
 ```
+
+## Stakeholder Questions
+
+- What type of billing? <ins>Per-unit</ins>, tiered, volume, overage, etc.
+- How up-to-date does the system need to be? up-to-the-minute/hour/day?
+- What wait time are we targeting for the creation of the usage statement?
+- Are billing adjustments necessary?
+- What information should be on the statement?
+-
