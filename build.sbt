@@ -1,12 +1,16 @@
-val scala3Version = "3.2.2"
+ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / scalaVersion := "3.2.2"
+ThisBuild / name := "UsageBasedBilling"
+ThisBuild / organization := "com.isaacp"
 
-lazy val root = project
-  .in(file("."))
+lazy val core = project in file("modules/core")
+lazy val useCases = (project in file("modules/useCases")).dependsOn(core)
+
+lazy val root = (project in file(".")).aggregate(core, useCases).dependsOn(useCases)
   .settings(
-    name := "canopy",
-    version := "0.1.0-SNAPSHOT",
-
-    scalaVersion := scala3Version,
-
-    libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
+    name := "UsageBasedBilling",
+    libraryDependencies ++= Seq(
+      "com.lihaoyi" %% "fansi" % "0.4.0",
+      "org.scalatest" %% "scalatest" % "3.2.15" % Test
+    )
   )

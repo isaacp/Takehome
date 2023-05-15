@@ -1,0 +1,4 @@
+package gateways
+
+trait Messages {
+}
