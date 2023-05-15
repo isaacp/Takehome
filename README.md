@@ -14,3 +14,10 @@ To see the changing report data as time goes by, type the following comand into 
 ```&> report <customer_number>```
  
 customer_number = 1, 2, or 3
+
+To Exit:
+> &> q
+
+Or
+
+> &> quit 

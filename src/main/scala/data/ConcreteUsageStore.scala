@@ -15,7 +15,11 @@ class ConcreteUsageStore extends UsageStore {
   }
 
   override def usage(start: LocalDateTime, end: LocalDateTime, account: String): Try[List[UsageEvent]] = Try {
-    collection.filter(p =>(p.timestamp.isAfter(start) || p.timestamp.equals(start)) && (p.timestamp.isBefore(end) || p.timestamp.equals(end)))
+    collection.filter(p =>
+      (p.timestamp.isAfter(start) || p.timestamp.equals(start)) &&
+      (p.timestamp.isBefore(end) || p.timestamp.equals(end)) &&
+      account == p.customer
+    )
   }
 
   override def contains(eventId: String): Boolean = {

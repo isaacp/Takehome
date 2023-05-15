@@ -71,7 +71,7 @@ object Application extends App {
     val rand = new scala.util.Random
 
     for {
-      _ <- 0 to 100
+      _ <- 0 to 1000
       _ = metricStore.add(
         Metric(
           UUID.randomUUID().toString,
