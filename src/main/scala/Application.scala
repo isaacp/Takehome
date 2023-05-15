@@ -16,13 +16,10 @@ object Application extends App {
   private val customerAccounts = ConcreteCustomerAccounts()
   private val billingAdjustments = ConcreteBillingAdjustments()
   private val converter = Converter()
-
-  LoadData()
-
   private val reportController = BuildUsageReportController(usageStore, usageArchive, customerAccounts, billingAdjustments)
   private val adjustmentController = AddBillingAdjustmentController(billingAdjustments)
 
-  println(customerAccounts)
+  LoadData()
   eventLoop
 
   private def eventLoop: Try[Unit] = Try {
