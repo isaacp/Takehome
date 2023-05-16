@@ -13,9 +13,6 @@ case class BuildUsageReportController(
   customerAccounts: CustomerAccounts,
   billingAdjustments: BillingAdjustments) {
   def execute(start: LocalDateTime, end: LocalDateTime, account: String): Try[Report] = {
-
-
-
     customerAccounts.customerAccount(account) match
       case Some(acct) =>
         for{

@@ -33,7 +33,7 @@ object Application extends App {
         println(s"${command.capitalize} for account $account ")
         println(report)
       }
-    else if input.matches("adjust [0-9]+ [0-9]+(.[0-9]+)?") then
+    else if input.matches("adjust [0-9]+ (-)?[0-9]+(.[0-9]+)?") then
       val command = input.split(" ")(0)
       val account = input.split(" ")(1)
       val amount = input.split(" ")(2)

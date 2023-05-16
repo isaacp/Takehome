@@ -1,5 +1,4 @@
 package entities
 
 trait ReportBuilder {
-
 }
