@@ -13,14 +13,19 @@ case class BuildUsageReportController(
   customerAccounts: CustomerAccounts,
   billingAdjustments: BillingAdjustments) {
   def execute(start: LocalDateTime, end: LocalDateTime, account: String): Try[Report] = {
+
+
+
     customerAccounts.customerAccount(account) match
       case Some(acct) =>
-        usageStore.usage(start, end, account).map{usage =>
-          val compute = usage.filter(_.usageType == "compute").map(_.units).sum
-          val storage = usage.filter(_.usageType == "storage").map(_.units).sum
-          val bandwidth = usage.filter(_.usageType == "bandwidth").map(_.units).sum
-          Report(acct.id, start, end, acct.currency, acct.tier, compute * 0.008, storage * 0.016, bandwidth * 0.021)
-        }
+        for{
+          usage <- usageStore.usage(start, end, acct.id)
+          adjustments <- billingAdjustments.adjustments(start, end, acct.id)
+          compute = usage.filter(_.usageType == "compute").map(_.units).sum
+          storage = usage.filter(_.usageType == "storage").map(_.units).sum
+          bandwidth = usage.filter(_.usageType == "bandwidth").map(_.units).sum
+          adjustment = adjustments.map(_.amount).sum
+        } yield Report(acct.id, start, end, acct.currency, acct.tier, compute * 0.008, storage * 0.016, bandwidth * 0.021, adjustment)
       case None => Failure(NoSuchElementException(s"Account $account does not exist"))
   }
 }

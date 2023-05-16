@@ -10,5 +10,6 @@ final case class Report(
     tier: String,
     compute: Double,
     storage: Double,
-    bandwidth: Double
+    bandwidth: Double,
+    adjustment: Double
 )
