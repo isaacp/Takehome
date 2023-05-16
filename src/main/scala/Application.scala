@@ -26,17 +26,18 @@ object Application extends App {
     RunMetricsRetrievalStorageProcess(start, LocalDateTime.now)
     val input = readLine("$> ")
     val now = LocalDateTime.now()
+    val parts = input.split(" ")
     if input.matches("report [0-9]+") then
-      val command = input.split(" ")(0)
-      val account = input.split(" ")(1)
+      val command = parts(0)
+      val account = parts(1)
       reportController.execute(start, now, account).map{ report =>
         println(s"${command.capitalize} for account $account ")
         println(report)
       }
     else if input.matches("adjust [0-9]+ (-)?[0-9]+(.[0-9]+)?") then
-      val command = input.split(" ")(0)
-      val account = input.split(" ")(1)
-      val amount = input.split(" ")(2)
+      val command = parts(0)
+      val account = parts(1)
+      val amount = parts(2)
       adjustmentController.execute(BillingAdjustment(amount.toDouble, now, account))
       println(s"account $account ${command}ed by $amount dollars.")
 
