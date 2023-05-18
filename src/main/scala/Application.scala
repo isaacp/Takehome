@@ -68,17 +68,15 @@ object Application extends App {
     val metricType = List[String]("compute", "storage", "bandwidth")
     val rand = new scala.util.Random
 
-    for {
-      _ <- 0 to 1000
-      _ = metricStore.add(
+    for (_ <- 0 to 10000)
+      metricStore.add(
         Metric(
           UUID.randomUUID().toString,
           metricType(rand.between(0, 3)),
           rand.between(0, 250),
           accountIds(rand.between(0, 3)),
-          LocalDateTime.now().plusSeconds(rand.between(1, 300 ))
+          LocalDateTime.now().plusSeconds(rand.between(1, 300))
         )
       )
-    } yield 0
   }
 }

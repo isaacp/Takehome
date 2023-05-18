@@ -12,7 +12,20 @@ case class BuildUsageReportController(
   usageArchive: UsageArchive,
   customerAccounts: CustomerAccounts,
   billingAdjustments: BillingAdjustments) {
+
+  private val priceChart = Map(
+    ("compute" -> 0.008),
+    ("storage" -> 0.016),
+    ("bandwidth" -> 0.021)
+  )
   def execute(start: LocalDateTime, end: LocalDateTime, account: String): Try[Report] = {
+
+    def calculate(units: Double, unitType: String): Double = {
+      unitType match
+        case t @ "compute" => priceChart(t) * units
+        case t @ "storage" => priceChart(t) * units
+        case t @ "bandwidth" => priceChart(t) * units
+    }
     customerAccounts.customerAccount(account) match
       case Some(acct) =>
         for{
@@ -22,7 +35,16 @@ case class BuildUsageReportController(
           storage = usage.filter(_.usageType == "storage").map(_.units).sum
           bandwidth = usage.filter(_.usageType == "bandwidth").map(_.units).sum
           adjustment = adjustments.map(_.amount).sum
-        } yield Report(acct.id, start, end, acct.currency, acct.tier, compute * 0.008, storage * 0.016, bandwidth * 0.021, adjustment)
+        } yield Report(acct.id,
+          start,
+          end,
+          acct.currency,
+          acct.tier,
+          calculate(compute, "compute"),
+          calculate(storage, "storage"),
+          calculate(bandwidth, "bandwidth"),
+          adjustment
+        )
       case None => Failure(NoSuchElementException(s"Account $account does not exist"))
   }
 }
