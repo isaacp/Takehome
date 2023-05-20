@@ -3,6 +3,6 @@
   <component name="ScalaCompilerConfiguration">
     <option name="compileOrder" value="JavaThenScala" />
     <option name="incrementalityType" value="SBT" />
-    <profile name="sbt 1" modules="core,modules.core,modules.useCases,root,sbt-Test,useCases" />
+    <profile name="sbt 1" modules="UsageBasedBilling,core,modules.core,modules.useCases,root,sbt-Test,useCases" />
   </component>
 </project>

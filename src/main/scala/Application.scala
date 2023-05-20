@@ -7,14 +7,18 @@ import scala.io.StdIn.readLine
 import java.time.*
 import java.util.{NoSuchElementException, UUID}
 import scala.util.{Failure, Success, Try}
+import data.H2Database
 
 object Application extends App {
   val start = LocalDateTime.now()
-  private val metricStore = ConcreteMetricStore()
-  private val usageStore = ConcreteUsageStore()
+  private val database = H2Database()
+  database.initialize
+
+  private val metricStore = ConcreteMetricStore(database)
+  private val usageStore = ConcreteUsageStore(database)
+  private val customerAccounts = ConcreteCustomerAccounts(database)
+  private val billingAdjustments = ConcreteBillingAdjustments(database)
   private val usageArchive = ConcreteUsageArchive()
-  private val customerAccounts = ConcreteCustomerAccounts()
-  private val billingAdjustments = ConcreteBillingAdjustments()
   private val converter = Converter()
   private val reportController = BuildUsageReportController(usageStore, usageArchive, customerAccounts, billingAdjustments)
   private val adjustmentController = AddBillingAdjustmentController(billingAdjustments)
@@ -30,7 +34,8 @@ object Application extends App {
     if input.matches("report [0-9]+") then
       val command = parts(0)
       val account = parts(1)
-      reportController.execute(start, now, account).map{ report =>
+      println(s"$command $account")
+      reportController.execute(start, now, account).foreach{ report =>
         println(s"${command.capitalize} for account $account ")
         println(report)
       }
@@ -38,8 +43,9 @@ object Application extends App {
       val command = parts(0)
       val account = parts(1)
       val amount = parts(2)
-      adjustmentController.execute(BillingAdjustment(amount.toDouble, now, account))
-      println(s"account $account ${command}ed by $amount dollars.")
+      adjustmentController.execute(BillingAdjustment(amount.toDouble, now, account)) match
+        case Success(_) => println(s"account $account ${command}ed by $amount dollars.")
+        case Failure(exception) => println(exception)
 
     if input.matches("q|quit") then
       Success(())
@@ -60,7 +66,7 @@ object Application extends App {
     }
   }
 
-  private def LoadData() = {
+  private def LoadData(): Unit = {
     customerAccounts.add(CustomerAccount("1", "platinum", "usd"))
     customerAccounts.add(CustomerAccount("2", "gold", "usd"))
     customerAccounts.add(CustomerAccount("3", "silver", "usd"))

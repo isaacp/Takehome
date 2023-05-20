@@ -7,9 +7,7 @@ import java.util.Date
 import scala.util.Try
 
 case class ConvertUsageMetricsController(converter: Converter) {
-  def execute(usageMetrics: List[Metric]): Try[List[UsageEvent]] = Try {
-    usageMetrics.map{ metric =>
-      converter.convert(metric)
-    }
+  def execute(metrics: List[Metric]): Try[List[UsageEvent]] = Try {
+    metrics.map(converter.convert)
   }
 }
