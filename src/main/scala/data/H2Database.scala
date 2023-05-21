@@ -45,8 +45,7 @@ class H2Database {
   }
 
   private def connection(): Connection = {
-    if con.isClosed then
-      con = DriverManager.getConnection(DATABASE_URL)
+    if con.isClosed then con = DriverManager.getConnection(DATABASE_URL)
     con
   }
 }

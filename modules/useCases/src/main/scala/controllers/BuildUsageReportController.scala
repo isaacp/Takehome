@@ -49,8 +49,11 @@ case class BuildUsageReportController(
       acct.currency,
       acct.tier,
       calculate(units._1, "compute"),
+      units._1,
       calculate(units._2, "storage"),
+      units._2,
       calculate(units._3, "bandwidth"),
+      units._3,
       adjustment
     )
   }

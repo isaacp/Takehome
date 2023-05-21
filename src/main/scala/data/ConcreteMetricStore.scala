@@ -15,7 +15,7 @@ class ConcreteMetricStore extends MetricStore {
     val result = h2Database.query(s"SELECT * FROM metrics Where ID = '$id'")
     result.map(convertResultsToMetrics) match
       case Success(metrics) =>
-        if metrics.length > 0 then
+        if metrics.nonEmpty then
           Success(Some(metrics.head))
         else
           Try(None)

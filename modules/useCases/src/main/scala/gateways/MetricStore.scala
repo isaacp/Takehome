@@ -5,7 +5,7 @@ import entities.{Metric, UsageEvent}
 import java.time._
 import scala.util.Try
 
-trait MetricStore {
+abstract class MetricStore {
   def metrics(start: LocalDateTime, end: LocalDateTime): Try[List[Metric]]
 
   def metric(id: String): Try[Option[Metric]]

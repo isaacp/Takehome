@@ -1,5 +1,6 @@
+import akka.actor.{ActorSystem, Props}
 import controllers.{AddBillingAdjustmentController, AuditUsageEventsController, BuildUsageReportController, ConvertUsageMetricsController, GetUsageMetricsController, PersistUsageEventsController}
-import data.{ConcreteBillingAdjustments, ConcreteCustomerAccounts, ConcreteMetricStore, ConcreteUsageArchive, ConcreteUsageStore}
+import data.{ConcreteBillingAdjustments, ConcreteCustomerAccounts, ConcreteMessages, ConcreteMetricStore, ConcreteUsageArchive, ConcreteUsageStore, H2Database, UsageWriterAkka}
 import entities.{BillingAdjustment, Converter, CustomerAccount, Metric}
 import gateways.{MetricStore, UsageStore}
 
@@ -7,7 +8,6 @@ import scala.io.StdIn.readLine
 import java.time.*
 import java.util.{NoSuchElementException, UUID}
 import scala.util.{Failure, Success, Try}
-import data.H2Database
 
 object Application extends App {
   val start = LocalDateTime.now()
@@ -19,11 +19,14 @@ object Application extends App {
   private val customerAccounts = ConcreteCustomerAccounts(database)
   private val billingAdjustments = ConcreteBillingAdjustments(database)
   private val usageArchive = ConcreteUsageArchive()
+  private val messages = ConcreteMessages(usageStore)
   private val converter = Converter()
   private val reportController = BuildUsageReportController(usageStore, usageArchive, customerAccounts, billingAdjustments)
   private val adjustmentController = AddBillingAdjustmentController(billingAdjustments)
 
   LoadData()
+  RunMetricsRetrievalStorageProcess(start, LocalDateTime.now)
+
   eventLoop
 
   private def eventLoop: Try[Unit] = Try {
@@ -34,7 +37,6 @@ object Application extends App {
     if input.matches("report [0-9]+") then
       val command = parts(0)
       val account = parts(1)
-      println(s"$command $account")
       reportController.execute(start, now, account).foreach{ report =>
         println(s"${command.capitalize} for account $account ")
         println(report)
@@ -58,10 +60,12 @@ object Application extends App {
 
     GetUsageMetricsController(metricStore).execute(start, end).map { metrics =>
       ConvertUsageMetricsController(converter).execute(metrics).map { usageEvents =>
-        if usageEvents.exists(usageEvent => auditController.execute(usageEvent).isFailure) then
-          Failure(NoSuchElementException("Error auditing usage event."))
-        else
-          PersistUsageEventsController(usageStore).execute(usageEvents)
+        for (usageEvent <- usageEvents) {
+          if auditController.execute(usageEvent).isFailure then
+            Failure(NoSuchElementException("Error auditing usage event."))
+          else
+            messages.push(usageEvent)
+        }
       }
     }
   }

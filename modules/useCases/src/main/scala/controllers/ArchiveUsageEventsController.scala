@@ -8,6 +8,8 @@ import scala.util.Try
 
 case class ArchiveUsageEventsController(usageStore: UsageStore, usageArchive: UsageArchive) {
   def execute(usageEvents: List[UsageEvent]): Try[Unit] = Try {
-    usageEvents.foreach(usageEvent => usageArchive.add(usageEvent))
+    for (usageEvent <- usageEvents) {
+      usageArchive add usageEvent
+    }
   }
 }
