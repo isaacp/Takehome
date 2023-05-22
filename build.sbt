@@ -13,6 +13,6 @@ lazy val root = (project in file(".")).aggregate(core, useCases).dependsOn(useCa
       "com.lihaoyi" %% "fansi" % "0.4.0",
       "com.h2database" % "h2" % "2.1.214",
       "com.typesafe.akka" %% "akka-actor" % "2.8.0",
-      "org.scalatest" %% "scalatest" % "3.2.15" % Test
+      "org.scalatest" %% "scalatest" % "3.2.16" % "test"
     )
   )

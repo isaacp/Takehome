@@ -18,7 +18,7 @@ object Application extends App {
   private val usageStore = ConcreteUsageStore(database)
   private val customerAccounts = ConcreteCustomerAccounts(database)
   private val billingAdjustments = ConcreteBillingAdjustments(database)
-  private val usageArchive = ConcreteUsageArchive()
+  private val usageArchive = ConcreteUsageArchive(database)
   private val messages = ConcreteMessages(usageStore)
   private val converter = Converter()
   private val reportController = BuildUsageReportController(usageStore, usageArchive, customerAccounts, billingAdjustments)

@@ -7,7 +7,7 @@
 
 - [Design Document](docs/design.md)
 
-## Run Project
+### Run Project
 
 > 1. sbt compile  
 > 2. sbt run

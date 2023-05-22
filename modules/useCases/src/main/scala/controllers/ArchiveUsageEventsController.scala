@@ -8,8 +8,9 @@ import scala.util.Try
 
 case class ArchiveUsageEventsController(usageStore: UsageStore, usageArchive: UsageArchive) {
   def execute(usageEvents: List[UsageEvent]): Try[Unit] = Try {
-    for (usageEvent <- usageEvents) {
+    usageEvents.map { usageEvent =>
       usageArchive add usageEvent
+      usageStore delete usageEvent
     }
   }
 }

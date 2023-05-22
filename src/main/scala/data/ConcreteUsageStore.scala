@@ -39,6 +39,10 @@ class ConcreteUsageStore extends UsageStore {
       case failure@Failure(_) => failure
   }
 
+  override def delete(usageEvent: UsageEvent): Try[Unit] = {
+    h2Database.command(s"DELETE FROM usage WHERE ID=${usageEvent.metricId}")
+  }
+
   private def convertResultsToUsage(result: ResultSet): List[UsageEvent] = {
     var list = List[UsageEvent]()
     while (result.next)
@@ -53,7 +57,6 @@ class ConcreteUsageStore extends UsageStore {
       list = usage :: list
     list
   }
-
 }
 
 object ConcreteUsageStore {
