@@ -52,3 +52,7 @@ To Exit:
 Or
 
 > &> quit 
+ 
+ ### Testing
+ I believe that testing is of the utmost importance. In order to get the level of functionality that I have, I decided to forego unit tests for this project. I did, however, perform extensive manual tests.  
+ Not as good as automated tests, but does provide some level of confidence in the completeness of the solution.
