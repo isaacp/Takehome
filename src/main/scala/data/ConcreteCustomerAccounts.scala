@@ -1,7 +1,7 @@
 package data
 
 import data.ConcreteCustomerAccounts.h2Database
-import entities.CustomerAccount
+import entities.{CustomerAccount, UsageTier}
 import gateways.CustomerAccounts
 
 import java.sql.ResultSet
@@ -17,7 +17,7 @@ class ConcreteCustomerAccounts extends CustomerAccounts {
       while (result.next())
         val customer = CustomerAccount(
           result.getString("ID"),
-          result.getString("TIER"),
+          UsageTier.valueOf(result.getString("TIER")),
           result.getString("CURRENCY")
         )
         list = customer :: list
@@ -31,7 +31,7 @@ class ConcreteCustomerAccounts extends CustomerAccounts {
   }
 
   override def add(customer: CustomerAccount): Try[Unit] = {
-    h2Database.command(s"INSERT INTO customers VALUES('${customer.id}', '${customer.tier}', '${customer.currency}')")
+    h2Database.command(s"INSERT INTO customers VALUES('${customer.id}', '${customer.tier.toString}', '${customer.currency}')")
   }
 }
 

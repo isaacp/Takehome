@@ -12,19 +12,19 @@
 > 1. sbt compile  
 > 2. sbt run
  
-The usage database is prepulated with user data for 3 accounts over a five-minute period from the start of the application.
+The usage database is pre-populated with user data for 4 accounts over a five-minute period from the start of the application.
 To see the changing report data as time goes by, type the following command into the prompt:
 
 ```&> report <customer_number>```
  
-customer_number = 1, 2, or 3
+customer_number = 1, 2, 3 or 4
 
 The report will print as follows:
 
 ```
 |------------------------------------------------------------
 | Canopy, Inc            Period Ending: May 20 2023 21:05
-| Customer: 1
+| Customer: 1 (platinum)
 |
 |   Compute(23104 cu):
 |   $184.83

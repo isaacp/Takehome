@@ -8,7 +8,7 @@ final case class Report(
     startDate: LocalDateTime,
     endDate: LocalDateTime,
     currency: String,
-    tier: String,
+    tier: UsageTier,
     compute: Double,
     computeUnits: Double,
     storage: Double,
@@ -22,7 +22,7 @@ final case class Report(
     s"""
       ||------------------------------------------------------------
       || Canopy, Inc            Period Ending: ${endDate.format(DateTimeFormatter.ofPattern("MMM d uuuu HH:MM"))}
-      || Customer: $customer
+      || Customer: $customer ($tier)
       ||
       ||   Compute(${computeUnits.toInt} cu):
       ||   ${formatter.format(compute)}

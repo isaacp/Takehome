@@ -1,3 +1,3 @@
 package entities
 
-case class CustomerAccount(id: String, tier: String, currency: String)
+case class CustomerAccount(id: String, tier: UsageTier, currency: String)

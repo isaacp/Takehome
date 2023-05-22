@@ -9,6 +9,7 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import scala.util.{Failure, Success, Try}
 import data.H2Database
+import entities.UsageType
 
 class ConcreteUsageStore extends UsageStore {
   override def add(usageEvent: UsageEvent): Try[Unit] = {
@@ -16,7 +17,7 @@ class ConcreteUsageStore extends UsageStore {
       s"INSERT INTO usage VALUES(" +
         s"'${usageEvent.metricId}', " +
         s"'${usageEvent.customer}', " +
-        s"'${usageEvent.usageType}', " +
+        s"'${usageEvent.usageType.toString}', " +
         s"${usageEvent.units}, " +
         s"'${usageEvent.timestamp.format(DateTimeFormatter.ISO_DATE_TIME)}', " +
         s"'${usageEvent.createdAt.format(DateTimeFormatter.ISO_DATE_TIME)}'" +
@@ -44,7 +45,7 @@ class ConcreteUsageStore extends UsageStore {
       val usage = UsageEvent(
         result.getString("ID"),
         result.getString("CUSTOMER"),
-        result.getString("USAGE_TYPE"),
+        UsageType.valueOf(result.getString("USAGE_TYPE")),
         result.getDouble("UNITS"),
         result.getTimestamp("TIME_OF").toLocalDateTime,
         result.getTimestamp("CREATED").toLocalDateTime

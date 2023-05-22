@@ -1,7 +1,7 @@
 package data
 
 import data.ConcreteMetricStore.h2Database
-import entities.{Metric, UsageEvent}
+import entities.{Metric, UsageEvent, UsageType}
 import gateways.MetricStore
 
 import java.sql.{ResultSet, Timestamp}
@@ -36,7 +36,7 @@ class ConcreteMetricStore extends MetricStore {
   }
 
   override def add(metric: Metric): Try[Unit] = {
-    h2Database.command(s"INSERT INTO metrics VALUES('${metric.id}', '${metric.metricType}', ${metric.value}, '${metric.customer}', '${metric.time.format(DateTimeFormatter.ISO_DATE_TIME)}')")
+    h2Database.command(s"INSERT INTO metrics VALUES('${metric.id}', '${metric.metricType.toString}', ${metric.value}, '${metric.customer}', '${metric.time.format(DateTimeFormatter.ISO_DATE_TIME)}')")
   }
 
   private def convertResultsToMetrics(result: ResultSet): List[Metric] = {
@@ -44,7 +44,7 @@ class ConcreteMetricStore extends MetricStore {
     while (result.next)
       val metric = Metric(
         result.getString("ID"),
-        result.getString("USAGE_TYPE"),
+        UsageType.valueOf(result.getString("USAGE_TYPE")),
         result.getInt("VAL"),
         result.getString("CUSTOMER"),
         result.getTimestamp("CREATED").toLocalDateTime

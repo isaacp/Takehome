@@ -1,7 +1,7 @@
 import akka.actor.{ActorSystem, Props}
 import controllers.{AddBillingAdjustmentController, AuditUsageEventsController, BuildUsageReportController, ConvertUsageMetricsController, GetUsageMetricsController, PersistUsageEventsController}
 import data.{ConcreteBillingAdjustments, ConcreteCustomerAccounts, ConcreteMessages, ConcreteMetricStore, ConcreteUsageArchive, ConcreteUsageStore, H2Database, UsageWriterAkka}
-import entities.{BillingAdjustment, Converter, CustomerAccount, Metric}
+import entities.{BillingAdjustment, Converter, CustomerAccount, Metric, UsageType, UsageTier}
 import gateways.{MetricStore, UsageStore}
 
 import scala.io.StdIn.readLine
@@ -71,20 +71,21 @@ object Application extends App {
   }
 
   private def LoadData(): Unit = {
-    customerAccounts.add(CustomerAccount("1", "platinum", "usd"))
-    customerAccounts.add(CustomerAccount("2", "gold", "usd"))
-    customerAccounts.add(CustomerAccount("3", "silver", "usd"))
-    val accountIds = List[String]("1", "2", "3")
-    val metricType = List[String]("compute", "storage", "bandwidth")
+    customerAccounts.add(CustomerAccount("1", UsageTier.platinum, "usd"))
+    customerAccounts.add(CustomerAccount("2", UsageTier.gold, "usd"))
+    customerAccounts.add(CustomerAccount("3", UsageTier.silver, "usd"))
+    customerAccounts.add(CustomerAccount("4", UsageTier.basic, "usd"))
+    val accountIds = List[String]("1", "2", "3", "4")
+    val metricType = List[UsageType](UsageType.compute, UsageType.storage, UsageType.bandwidth)
     val rand = new scala.util.Random
 
-    for (_ <- 0 to 10000)
+    for (_ <- 0 to 100000)
       metricStore.add(
         Metric(
           UUID.randomUUID().toString,
           metricType(rand.between(0, 3)),
           rand.between(0, 250),
-          accountIds(rand.between(0, 3)),
+          accountIds(rand.between(0, 4)),
           LocalDateTime.now().plusSeconds(rand.between(1, 300))
         )
       )
